@@ -48,4 +48,7 @@ struct ScreenSize {
     }()
     
     static let BORDER_WIDTH: CGFloat = 1/UIScreen.main.scale
+    
+    static let LEADING: CGFloat = 16.0
+
 }

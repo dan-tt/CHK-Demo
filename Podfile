@@ -24,7 +24,7 @@ target 'CHK Demo' do
   pod 'PureLayout'
   pod 'JustIconFont'
   pod 'KafkaRefresh'
-
+  pod 'Shimmer'
 end
 
 # Pods for testing

@@ -31,6 +31,10 @@ class BaseVM: NSObject {
     
     var page = 1
     
+    func sizeForItemAt(indexPath: IndexPath) -> CGSize {
+        return .zero
+    }
+    
     deinit {
         disposeBag = DisposeBag()
         Logger.log(message: "\(Self.self) deinit")

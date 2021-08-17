@@ -100,7 +100,7 @@ struct EmptyDataConfig {
     var verticalOffset: CGFloat {
         switch controller.emptyDataType {
         default:
-            return 0
+            return ScreenSize.LEADING
         }
     }
     
@@ -111,8 +111,8 @@ struct EmptyDataConfig {
     var customView: UIView? {
         switch controller.emptyDataType {
         default:
-            return nil
+            let v = ShimmerView(type: .normal, frame: controller.view.frame)
+            return controller.showLoading ? v : nil
         }
     }
-    
 }

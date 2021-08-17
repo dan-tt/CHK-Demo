@@ -12,9 +12,7 @@ import ObjectMapper
 import AlamofireObjectMapper
 
 class APIService: NSObject {
-    
     static let shared = APIService()
-    let disposeBag = DisposeBag()
     var activePushInfo: Bool = false
     var isGettingAccessToken = false
     var isShowingPopupWarning: Bool = false
@@ -44,7 +42,7 @@ class APIService: NSObject {
     func request(apiRouter: APIRouter) -> Observable<ResponseModel?> {
         return Observable.create { observer in
             let urlString = apiRouter.urlRequest?.url?.absoluteString
-            let request = AF.request(apiRouter).responseObject { (response: DataResponse<ResponseModel, AFError>) in
+            let request = AF.request(apiRouter).responseObject { (response: AFDataResponse<ResponseModel>) in
                 switch response.result {
                 case .success:
                     let responseObj = response.value
@@ -56,7 +54,6 @@ class APIService: NSObject {
                     let errorBase = ResponseError()
                     Logger.log(message: "Request Failed: ", object: "<URL:\(urlString ?? "")> \(error.localizedDescription)")
                     observer.onError(errorBase)
-                    break
                 }
             }
             return Disposables.create {

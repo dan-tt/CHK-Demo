@@ -49,6 +49,8 @@
 		8F7648FB26CAAC7E00D124D2 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7648FA26CAAC7E00D124D2 /* SearchBar.swift */; };
 		8F7648FD26CAACF600D124D2 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7648FC26CAACF600D124D2 /* UIView+Ext.swift */; };
 		8F7648FF26CAAF4300D124D2 /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7648FE26CAAF4300D124D2 /* String+Ext.swift */; };
+		8F76490126CB481600D124D2 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F76490026CB481600D124D2 /* CollectionViewCell.swift */; };
+		8FB7060E26CB6C5D003A2F46 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7060D26CB6C5D003A2F46 /* ShimmerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,6 +121,8 @@
 		8F7648FA26CAAC7E00D124D2 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		8F7648FC26CAACF600D124D2 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
 		8F7648FE26CAAF4300D124D2 /* String+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Ext.swift"; sourceTree = "<group>"; };
+		8F76490026CB481600D124D2 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		8FB7060D26CB6C5D003A2F46 /* ShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerView.swift; sourceTree = "<group>"; };
 		9C3F7C3123D82DABE3610935 /* Pods-CHK DemoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CHK DemoTests.release.xcconfig"; path = "Target Support Files/Pods-CHK DemoTests/Pods-CHK DemoTests.release.xcconfig"; sourceTree = "<group>"; };
 		A5C54EA5F63F14A695D9A621 /* Pods_CHK_Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CHK_Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB5F061591220D3FB49D4B87 /* Pods-CHK DemoUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CHK DemoUITests.release.xcconfig"; path = "Target Support Files/Pods-CHK DemoUITests/Pods-CHK DemoUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -288,6 +292,8 @@
 				8F7648F426CA77C700D124D2 /* TableViewCell.swift */,
 				8F7648F826CAA0EE00D124D2 /* BaseView.swift */,
 				8F7648FA26CAAC7E00D124D2 /* SearchBar.swift */,
+				8F76490026CB481600D124D2 /* CollectionViewCell.swift */,
+				8FB7060D26CB6C5D003A2F46 /* ShimmerView.swift */,
 			);
 			path = BaseVC;
 			sourceTree = "<group>";
@@ -615,6 +621,7 @@
 				8F7648D726CA516100D124D2 /* EmptyDataSetDelegate.swift in Sources */,
 				8F7648F326CA689B00D124D2 /* MainVM.swift in Sources */,
 				8F7648C726CA444B00D124D2 /* Defines.swift in Sources */,
+				8F76490126CB481600D124D2 /* CollectionViewCell.swift in Sources */,
 				8F7648F526CA77C700D124D2 /* TableViewCell.swift in Sources */,
 				8F7648E426CA563A00D124D2 /* EmptyDataConfig.swift in Sources */,
 				8F7648C226CA435C00D124D2 /* APIRouter.swift in Sources */,
@@ -628,6 +635,7 @@
 				8F7648FF26CAAF4300D124D2 /* String+Ext.swift in Sources */,
 				8F7648F926CAA0EE00D124D2 /* BaseView.swift in Sources */,
 				8F7648FB26CAAC7E00D124D2 /* SearchBar.swift in Sources */,
+				8FB7060E26CB6C5D003A2F46 /* ShimmerView.swift in Sources */,
 				8F7648E226CA55A000D124D2 /* NavigationController.swift in Sources */,
 				8F7648FD26CAACF600D124D2 /* UIView+Ext.swift in Sources */,
 				8F7648DE26CA539400D124D2 /* Navigator.swift in Sources */,

@@ -122,6 +122,10 @@ class BaseVC: UIViewController, Navigatable {
 
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
+    
     func bindViewModel() {
         self.viewModel?.loadingSignal.subscribe(onNext: { [weak self] (isLoading) in
             guard let self = self else { return }
@@ -146,6 +150,10 @@ class BaseVC: UIViewController, Navigatable {
         
         self.viewModel?.dismissSignal.subscribe(onNext: { [weak self] _ in
             self?.dismiss()
+        }).disposed(by: disposeBag)
+        
+        self.viewModel?.refreshSignal.subscribe(onNext: { [weak self] in
+            self?.refreshTrigger.onNext(())
         }).disposed(by: disposeBag)
     }
     

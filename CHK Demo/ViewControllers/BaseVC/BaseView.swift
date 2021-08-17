@@ -27,7 +27,7 @@ class BaseView: UIView {
     }
     
     override init(frame: CGRect) {
-        super.init(frame: .zero)
+        super.init(frame: frame)
         translatesAutoresizingMaskIntoConstraints = false;
         backgroundColor = .clear
         makeUI()

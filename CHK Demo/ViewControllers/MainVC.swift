@@ -10,7 +10,7 @@ import RxCocoa
 import RxSwift
 import RxDataSources
 
-class MainVC: TableBaseVC {
+class MainVC: BaseCollectionVC {
     override func hideNavigation() -> Bool {
         return false
     }
@@ -50,20 +50,14 @@ class MainVC: TableBaseVC {
         return v
     }()
     
-    lazy var searchTableView: UITableView = {
-        let v = UITableView.init(frame: .zero, style: tableStyle())
+    lazy var searchCV: UICollectionView = {
+        let v = UICollectionView.init(frame: .zero, collectionViewLayout: layout())
         v.alpha = 0
         v.backgroundColor = .white
-        v.rowHeight = UITableView.automaticDimension
-        v.tableFooterView = UIView(frame: .zero)
-        v.estimatedRowHeight = 50
-        v.cellLayoutMarginsFollowReadableWidth = false
         v.keyboardDismissMode = .onDrag
-        v.separatorColor = .clear
         v.dataSource = nil
         v.delegate = self
-        v.register(CoinCell.self, forCellReuseIdentifier: CoinCell.cellId)
-        v.rowHeight = CoinCell.cellHeight
+        v.register(CoinCell.self, forCellWithReuseIdentifier: CoinCell.cellId)
         v.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 59 + ScreenSize.BOTTOM_PADDING, right: 0)
         v.rx.itemSelected.subscribe(onNext: { [weak self] _ in
             self?.searchBar.tfSeach.resignFirstResponder()
@@ -74,10 +68,9 @@ class MainVC: TableBaseVC {
     override func makeUI() {
         super.makeUI()
         view.backgroundColor = .white
-        tableView.rowHeight = CoinCell.cellHeight
         //
-        view.insertSubview(headerView, aboveSubview: tableView)
-        view.insertSubview(searchTableView, aboveSubview: tableView)
+        view.insertSubview(headerView, aboveSubview: collectionView)
+        view.insertSubview(searchCV, aboveSubview: collectionView)
         //
         let h = ScreenSize.NAVIGATION_HEIGHT_FULL
         headerView.autoPinEdge(toSuperviewEdge: .top)
@@ -85,10 +78,10 @@ class MainVC: TableBaseVC {
         headerView.autoPinEdge(toSuperviewEdge: .right)
         headerView.autoSetDimension(.height, toSize: h)
         
-        searchTableView.autoPinEdge(.top, to: .bottom, of: view)
-        searchTableView.autoPinEdge(toSuperviewEdge: .left)
-        searchTableView.autoPinEdge(toSuperviewEdge: .right)
-        searchTableView.autoSetDimension(.height, toSize: ScreenSize.SCREEN_MAX_LENGTH - h)
+        searchCV.autoPinEdge(.top, to: .bottom, of: view)
+        searchCV.autoPinEdge(toSuperviewEdge: .left)
+        searchCV.autoPinEdge(toSuperviewEdge: .right)
+        searchCV.autoSetDimension(.height, toSize: ScreenSize.SCREEN_MAX_LENGTH - h)
     }
     
     override func bindViewModel() {
@@ -96,28 +89,28 @@ class MainVC: TableBaseVC {
         //
         guard let viewModel = viewModel as? MainVM else { return }
         let refresh = Observable.of(Observable.just(()), self.refreshTrigger).merge()
-        let input = MainVM.Input(headerTrigger: refresh, footerTrigger: self.loadMoreTrigger, selectionTrigger: tableView.rx.modelSelected(CoinModel.self).asDriver())
+        let input = MainVM.Input(headerTrigger: refresh, footerTrigger: self.loadMoreTrigger, selectionTrigger: collectionView.rx.modelSelected(CoinModel.self).asDriver())
         
         let output = viewModel.transform(input: input)
         output.items.asObservable()
             .map({[CoinSection(items: $0, headerTitle: "")]})
-            .bind(to: tableView.rx.items(dataSource: dataSource()))
+            .bind(to: collectionView.rx.items(dataSource: dataSource()))
             .disposed(by: disposeBag)
         // search result
         output.searchResult.asObservable()
             .map({[CoinSection(items: $0, headerTitle: "")]})
-            .bind(to: searchTableView.rx.items(dataSource: searchDataSource()))
+            .bind(to: searchCV.rx.items(dataSource: searchDataSource()))
             .disposed(by: disposeBag)
     }
     
     override func registerCell() {
-        tableView.register(CoinCell.self, forCellReuseIdentifier: CoinCell.cellId)
+        collectionView.register(CoinCell.self, forCellWithReuseIdentifier: CoinCell.cellId)
     }
     
-    func dataSource() -> RxTableViewSectionedAnimatedDataSource<CoinSection> {
-        let datasource = RxTableViewSectionedAnimatedDataSource<CoinSection>(
-            configureCell: { (dataSource, tableView, indexPath, model) -> UITableViewCell in
-                let cell = tableView.dequeueReusableCell(withIdentifier: CoinCell.cellId, for: indexPath) as! CoinCell
+    func dataSource() -> RxCollectionViewSectionedAnimatedDataSource<CoinSection> {
+        let datasource = RxCollectionViewSectionedAnimatedDataSource<CoinSection>(
+            configureCell: { (dataSource, tableView, indexPath, model) -> CollectionViewCell in
+                let cell = tableView.dequeueReusableCell(withReuseIdentifier: CoinCell.cellId, for: indexPath) as! CoinCell
                 cell.model = model
                 return cell
             })
@@ -125,10 +118,10 @@ class MainVC: TableBaseVC {
         return datasource
     }
     
-    func searchDataSource() -> RxTableViewSectionedAnimatedDataSource<CoinSection> {
-        let datasource = RxTableViewSectionedAnimatedDataSource<CoinSection>(
-            configureCell: { (dataSource, tableView, indexPath, model) -> UITableViewCell in
-                let cell = tableView.dequeueReusableCell(withIdentifier: CoinCell.cellId, for: indexPath) as! CoinCell
+    func searchDataSource() -> RxCollectionViewSectionedAnimatedDataSource<CoinSection> {
+        let datasource = RxCollectionViewSectionedAnimatedDataSource<CoinSection>(
+            configureCell: { (dataSource, tableView, indexPath, model) -> CollectionViewCell in
+                let cell = tableView.dequeueReusableCell(withReuseIdentifier: CoinCell.cellId, for: indexPath) as! CoinCell
                 cell.model = model
                 return cell
             })
@@ -142,8 +135,8 @@ class MainVC: TableBaseVC {
             searchBar.tfSeach.becomeFirstResponder()
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: { [weak self] in
                 guard let self = self else {return}
-                self.searchTableView.alpha = 1.0
-                self.searchTableView.transform = CGAffineTransform(translationX: 0, y: -self.searchTableView.frame.height)
+                self.searchCV.alpha = 1.0
+                self.searchCV.transform = CGAffineTransform(translationX: 0, y: -self.searchCV.frame.height)
                 
             }) { (finished) in
             }
@@ -154,17 +147,16 @@ class MainVC: TableBaseVC {
         searchBar.showCancelButton(false, animated: true)
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: { [weak self] in
             guard let self = self else {return}
-            self.searchTableView.alpha = 0.0
-            self.searchTableView.transform = CGAffineTransform.identity
+            self.searchCV.alpha = 0.0
+            self.searchCV.transform = CGAffineTransform.identity
         }) { (finished) in
         }
     }
-
 }
 
 // MARK: -
 // MARK: - CoinCell
-class CoinCell: TableViewCell {
+class CoinCell: CollectionViewCell {
     static var cellHeight : CGFloat {
         return 80.0
     }
@@ -245,7 +237,7 @@ class CoinCell: TableViewCell {
             lbDesc.text = model.base
             lbBuyPrice.text = "\(model.buyPrice ?? "0.0") \(model.counter ?? "")"
             lbSellPrice.text = "\(model.sellPrice ?? "0.0") \(model.counter ?? "")"
-            let defaultImage = UIImage.iconFont(IconFont.ic_no_network, fontSize: FontSize.h0, color: UIColor.lightGray)
+            let defaultImage = UIImage.iconFont(IconFont.ic_coin_default, fontSize: FontSize.h0, color: UIColor.lightGray)
             imv.setImage(with: URL(string: model.icon ?? ""), defaultImage: defaultImage)
         }
     }
@@ -272,5 +264,4 @@ class CoinCell: TableViewCell {
         vLine.autoPinEdge(toSuperviewEdge: .right)
         vLine.autoSetDimension(.height, toSize: ScreenSize.BORDER_WIDTH)
     }
-    
 }

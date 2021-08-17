@@ -112,9 +112,9 @@ class SearchBar : BaseView {
         vSearch.autoPinEdge(toSuperviewEdge: .bottom)
         vSearch.autoPinEdge(.right, to: .left, of: btnCancel)
         ///
-        imvSearch.autoPinEdge(toSuperviewEdge: .left, withInset: margin)
+        imvSearch.autoPinEdge(toSuperviewEdge: .left, withInset: 2*margin)
         imvSearch.autoAlignAxis(toSuperviewAxis: .horizontal)
-        imvSearch.autoSetDimensions(to: CGSize(width: 20, height: 20))
+        imvSearch.autoSetDimensions(to: CGSize(width: 16, height: 16))
         ///
         tfSeach.autoPinEdge(toSuperviewEdge: .top)
         tfSeach.autoPinEdge(toSuperviewEdge: .right, withInset: margin)

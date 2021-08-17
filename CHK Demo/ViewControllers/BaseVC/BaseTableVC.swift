@@ -135,7 +135,7 @@ class TableBaseVC: BaseVC, UIScrollViewDelegate {
         constraint_top_tbv = self.tableView.autoPinEdge(toSuperviewEdge: .top, withInset: topClv)
         self.tableView.autoPinEdge(toSuperviewEdge: .leading)
         self.tableView.autoPinEdge(toSuperviewEdge: .trailing)
-        constraint_bottom_tbv = self.tableView.autoPinEdge(toSuperviewEdge: .bottom, withInset: (ScreenSize.TABBAR_HEIGHT + ScreenSize.BOTTOM_PADDING))
+        constraint_bottom_tbv = self.tableView.autoPinEdge(toSuperviewEdge: .bottom)
     }
     
     func registerCell() {}

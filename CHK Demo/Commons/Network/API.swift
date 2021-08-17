@@ -12,8 +12,6 @@ import ObjectMapper
 
 extension APIService {
     
-    // MARK: - APIs Home
-    
     func getListCoin(counter: String) -> Observable<(res: [CoinModel]?, isLoadMore: Bool?)> {
         return Observable.create { [unowned self]observer in
             self.request(apiRouter: APIRouter.getListCoin(counter: counter)).subscribe { response in
@@ -22,7 +20,7 @@ extension APIService {
                 observer.onCompleted()
             } onError: { error in
                 observer.onError(error)
-            }.disposed(by: disposeBag)
+            }.disposed(by: rx.disposeBag)
             return Disposables.create()
         }
     }
