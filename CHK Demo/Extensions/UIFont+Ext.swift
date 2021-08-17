@@ -8,11 +8,11 @@
 import UIKit
 extension UIFont {
     static func titleFont() -> UIFont {
-        return UIFont.systemFont(ofSize: 16)
+        return UIFont.systemFont(ofSize: 14)
     }
     
     static func descFont() -> UIFont {
-        return UIFont.systemFont(ofSize: 14)
+        return UIFont.systemFont(ofSize: 16)
     }
     
     static func sellPriceFont() -> UIFont {

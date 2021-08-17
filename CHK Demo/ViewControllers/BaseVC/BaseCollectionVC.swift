@@ -41,7 +41,7 @@ class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
         v.indicatorStyle = .black
         v.delegate = nil
         v.dataSource = nil
-        v.rx.setDelegate(self).disposed(by: rx.disposeBag)
+        v.rx.setDelegate(self).disposed(by: disposeBag)
         if self.showEmptyDataSet() {
             v.emptyDataSetDelegate = self
             v.emptyDataSetSource = self
@@ -94,10 +94,17 @@ class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
         super.bindViewModel()
         
         if self.showHeaderRefresh() {
-            self.viewModel?.headerLoading.asObservable().bind(to: collectionView.headRefreshControl.rx.isAnimating).disposed(by: rx.disposeBag)
+            self.viewModel?.headerLoading.asObservable().bind(to: collectionView.headRefreshControl.rx.isAnimating).disposed(by: disposeBag)
+            self.viewModel?.loadingSignal.subscribe(onNext: { [unowned self]isLoading in
+                if isLoading {
+                    self.collectionView.headRefreshControl.resumeRefreshAvailable()
+                    return
+                }
+                self.collectionView.headRefreshControl.endRefreshing()
+            }).disposed(by: disposeBag)
         }
         if self.showFooterLoadMore() {
-            self.viewModel?.footerLoading.asObservable().bind(to: collectionView.footRefreshControl.rx.isAnimating).disposed(by: rx.disposeBag)
+            self.viewModel?.footerLoading.asObservable().bind(to: collectionView.footRefreshControl.rx.isAnimating).disposed(by: disposeBag)
             self.viewModel?.canLoadMoreSignal
                 .distinctUntilChanged()
                 .subscribe(onNext: { [unowned self] (canLoadMore) in
@@ -108,7 +115,7 @@ class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
                         self.collectionView.footRefreshControl.endRefreshingAndNoLongerRefreshing(withAlertText: "")
                         self.collectionView.footRefreshControl.isHidden = true
                     }
-                }).disposed(by: rx.disposeBag)
+                }).disposed(by: disposeBag)
         }
         
         self.viewModel?.errorSignal.subscribe(onNext: { [weak self] _ in
@@ -116,7 +123,7 @@ class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
             if self.showFooterLoadMore() {
                 self.collectionView.footRefreshControl.isHidden = true
             }
-        }).disposed(by: rx.disposeBag)
+        }).disposed(by: disposeBag)
     }
     
     override func updateConstraints() {

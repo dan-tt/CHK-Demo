@@ -3,3 +3,6 @@
 Podfile.lock
 Pods/
 CHK Demo.xcworkspace/
+CHK Demo.xcodeproj/xcshareddata/xcschemes/CHK Demo.xcscheme
+CHK Demo.xcodeproj/xcshareddata/xcschemes/CHK DemoUITests.xcscheme
+CHK Demo.xcodeproj/xcuserdata/dantt.xcuserdatad/xcschemes/xcschememanagement.plist

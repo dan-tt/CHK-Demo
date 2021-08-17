@@ -26,6 +26,23 @@ class CHK_DemoUITests: XCTestCase {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launch()
+        
+        app.textFields["Search"].tap()
+        
+        app/*@START_MENU_TOKEN@*/.keys["T"]/*[[".keyboards.keys[\"T\"]",".keys[\"T\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        
+        let hKey = app/*@START_MENU_TOKEN@*/.keys["h"]/*[[".keyboards.keys[\"h\"]",".keys[\"h\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
+        hKey.tap()
+        hKey.tap()
+        app/*@START_MENU_TOKEN@*/.staticTexts["Cancel"]/*[[".buttons[\"Cancel\"].staticTexts[\"Cancel\"]",".staticTexts[\"Cancel\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        
+        let collectionViewsQuery = app.collectionViews
+        let element = collectionViewsQuery.children(matching: .cell).element(boundBy: 4).children(matching: .other).element.children(matching: .other).element(boundBy: 0)
+        element.tap()
+        element.tap()
+        collectionViewsQuery.children(matching: .cell).element(boundBy: 1).children(matching: .other).element.swipeDown()
+        collectionViewsQuery.children(matching: .cell).element(boundBy: 2).children(matching: .other).element.children(matching: .other).element(boundBy: 0).tap()
+        app.collectionViews/*@START_MENU_TOKEN@*/.staticTexts["182.744 USD"]/*[[".cells.staticTexts[\"182.744 USD\"]",".staticTexts[\"182.744 USD\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
 
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.

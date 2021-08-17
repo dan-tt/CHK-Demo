@@ -53,11 +53,11 @@ extension UIColor {
     }
     
     static func titleColor() -> UIColor {
-        return .black
+        return .gray
     }
     
     static func descColor() -> UIColor {
-        return .gray
+        return .black
     }
     
     static func sellPriceColor() -> UIColor {
