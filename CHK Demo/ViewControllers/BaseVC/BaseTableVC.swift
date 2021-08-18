@@ -117,19 +117,18 @@ class TableBaseVC: BaseVC, UIScrollViewDelegate {
         }
         if self.showFooterLoadMore() {
             self.viewModel?.footerLoading.asObservable().bind(to: self.tableView.footRefreshControl.rx.isAnimating).disposed(by: disposeBag)
-            self.viewModel?.canLoadMoreSignal.subscribe(onNext: { [weak self] (canLoadMore) in
+            self.viewModel?.canLoadMoreSignal.subscribe(onNext: { [unowned self] (canLoadMore) in
                 if canLoadMore {
-                    self?.tableView.footRefreshControl.isHidden = false
-                    self?.tableView.footRefreshControl.resumeRefreshAvailable()
+                    self.tableView.footRefreshControl.isHidden = false
+                    self.tableView.footRefreshControl.resumeRefreshAvailable()
                 } else {
-                    self?.tableView.footRefreshControl.endRefreshingAndNoLongerRefreshing(withAlertText: "")
-                    self?.tableView.footRefreshControl.isHidden = true
+                    self.tableView.footRefreshControl.endRefreshingAndNoLongerRefreshing(withAlertText: "")
+                    self.tableView.footRefreshControl.isHidden = true
                 }
             }).disposed(by: disposeBag)
         }
         
-        self.viewModel?.errorSignal.subscribe(onNext: { [weak self] _ in
-            guard let self = self else { return }
+        self.viewModel?.errorSignal.subscribe(onNext: { [unowned self] _ in
             if self.showFooterLoadMore() {
                 self.tableView.footRefreshControl.isHidden = true
             }
@@ -157,23 +156,6 @@ class TableBaseVC: BaseVC, UIScrollViewDelegate {
 }
 
 extension TableBaseVC: UITableViewDelegate {
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-    }
-    
-    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
-
-    }
-    
-    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
-
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-
-    }
-    
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .none
     }

@@ -11,6 +11,12 @@ import RxSwift
 import RxDataSources
 
 class MainVC: BaseCollectionVC {
+    let searchTrigger = BehaviorRelay<String?>(value: nil)
+
+    override func showFooterLoadMore() -> Bool {
+        return false
+    }
+    
     override func hideNavigation() -> Bool {
         return false
     }
@@ -30,22 +36,20 @@ class MainVC: BaseCollectionVC {
     lazy var searchBar: SearchBar = {
         let v = SearchBar.newAutoLayout()
         v.cancelButtonClicked
-            .subscribe(onNext: { [weak self] () in
-                self?.showSearch(false)
+            .subscribe(onNext: { [unowned self] () in
+                self.showSearch(false)
             }).disposed(by: disposeBag)
         v.textDidBeginEditing
-            .subscribe(onNext: { [weak self](tf) in
-                guard let vm = self?.viewModel as? MainVM else {return}
-                vm.search(with: tf.text)
-                self?.showSearch(true)
+            .subscribe(onNext: { [unowned self](tf) in
+                self.searchTrigger.accept(tf.text)
+                self.showSearch(true)
             }).disposed(by: disposeBag)
         
         v.textSignal
             .debounce(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
             .distinctUntilChanged()
-            .subscribe(onNext: { [weak self](str) in
-                guard let vm = self?.viewModel as? MainVM else {return}
-                vm.search(with: str)
+            .subscribe(onNext: { [unowned self](str) in
+                self.searchTrigger.accept(str)
             }).disposed(by: disposeBag)
         return v
     }()
@@ -59,8 +63,8 @@ class MainVC: BaseCollectionVC {
         v.delegate = self
         v.register(CoinCell.self, forCellWithReuseIdentifier: CoinCell.cellId)
         v.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 59 + ScreenSize.BOTTOM_PADDING, right: 0)
-        v.rx.itemSelected.subscribe(onNext: { [weak self] _ in
-            self?.searchBar.tfSeach.resignFirstResponder()
+        v.rx.itemSelected.subscribe(onNext: { [unowned self] _ in
+            self.searchBar.tfSeach.resignFirstResponder()
         }).disposed(by: disposeBag)
         return v
     }()
@@ -89,7 +93,9 @@ class MainVC: BaseCollectionVC {
         //
         guard let viewModel = viewModel as? MainVM else { return }
         let refresh = Observable.of(Observable.just(()), self.refreshTrigger).merge()
-        let input = MainVM.Input(headerTrigger: refresh, footerTrigger: self.loadMoreTrigger, selectionTrigger: collectionView.rx.modelSelected(CoinModel.self).asDriver())
+        let input = MainVM.Input(headerTrigger: refresh,
+                                 selectionTrigger: collectionView.rx.modelSelected(CoinModel.self).asDriver(),
+                                 searchTrigger: self.searchTrigger.asDriver())
         
         let output = viewModel.transform(input: input)
         output.items.asObservable()
@@ -107,14 +113,13 @@ class MainVC: BaseCollectionVC {
         collectionView.register(CoinCell.self, forCellWithReuseIdentifier: CoinCell.cellId)
     }
     
-    func dataSource() -> RxCollectionViewSectionedAnimatedDataSource<CoinSection> {
-        let datasource = RxCollectionViewSectionedAnimatedDataSource<CoinSection>(
+    func dataSource() -> RxCollectionViewSectionedReloadDataSource<CoinSection> {
+        let datasource = RxCollectionViewSectionedReloadDataSource<CoinSection>(
             configureCell: { (dataSource, tableView, indexPath, model) -> CollectionViewCell in
                 let cell = tableView.dequeueReusableCell(withReuseIdentifier: CoinCell.cellId, for: indexPath) as! CoinCell
                 cell.model = model
                 return cell
             })
-        datasource.animationConfiguration = AnimationConfiguration(insertAnimation: .fade, reloadAnimation: .fade, deleteAnimation: .fade)
         return datasource
     }
     
@@ -133,8 +138,7 @@ class MainVC: BaseCollectionVC {
     func showSearch(_ isShow: Bool) {
         if isShow {
             searchBar.tfSeach.becomeFirstResponder()
-            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: { [weak self] in
-                guard let self = self else {return}
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: { [unowned self] in
                 self.searchCV.alpha = 1.0
                 self.searchCV.transform = CGAffineTransform(translationX: 0, y: -self.searchCV.frame.height)
                 
@@ -145,8 +149,7 @@ class MainVC: BaseCollectionVC {
         searchBar.text = ""
         searchBar.tfSeach.resignFirstResponder()
         searchBar.showCancelButton(false, animated: true)
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: { [weak self] in
-            guard let self = self else {return}
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: { [unowned self] in
             self.searchCV.alpha = 0.0
             self.searchCV.transform = CGAffineTransform.identity
         }) { (finished) in

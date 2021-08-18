@@ -13,18 +13,14 @@ import KafkaRefresh
 import NSObject_Rx
 
 class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
-    
-    let defaultCellId = "CellId"
-    let defaultHeaderCellId = "HeaderCellId"
-    
     lazy var constraint_top_clv: NSLayoutConstraint = NSLayoutConstraint()
     lazy var constraint_bottom_clv: NSLayoutConstraint = NSLayoutConstraint()
     
     lazy var vHeaderRefresh: KafkaReplicatorHeader = {
         let v = KafkaReplicatorHeader()
         v.themeColor = UIColor.lightGray
-        v.refreshHandler = { [weak self] in
-            self?.refreshTrigger.onNext(())
+        v.refreshHandler = { [unowned self] in
+            self.refreshTrigger.onNext(())
         }
         return v
     }()
@@ -118,8 +114,7 @@ class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
                 }).disposed(by: disposeBag)
         }
         
-        self.viewModel?.errorSignal.subscribe(onNext: { [weak self] _ in
-            guard let self = self else { return }
+        self.viewModel?.errorSignal.subscribe(onNext: { [unowned self] _ in
             if self.showFooterLoadMore() {
                 self.collectionView.footRefreshControl.isHidden = true
             }

@@ -21,7 +21,7 @@ struct CoinModel: Mappable, IdentifiableType, Equatable {
     var identity: String{
         return base ?? "0"
     }
-    var isLoading : Bool?
+
     var base: String?
     var name: String?
     var icon: String?

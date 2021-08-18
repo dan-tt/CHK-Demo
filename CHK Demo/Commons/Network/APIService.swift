@@ -13,28 +13,14 @@ import AlamofireObjectMapper
 
 class APIService: NSObject {
     static let shared = APIService()
-    var activePushInfo: Bool = false
-    var isGettingAccessToken = false
-    var isShowingPopupWarning: Bool = false
-    var curTimeServer: TimeInterval = 0.0
-    let timeEffectRefresh: TimeInterval = 3.0
     
     // MARK: - Init
-    
-    private override init() {
+    override init() {
         super.init()
     }
     
     func isConnectToInternet() -> Bool {
         return NetworkReachabilityManager()?.isReachable ?? false
-    }
-    
-    // MARK: - Others
-    
-    func updateTimeServer(time: TimeInterval) {
-        if curTimeServer < time {
-            curTimeServer = time
-        }
     }
     
     // MARK: - Request
@@ -59,6 +45,20 @@ class APIService: NSObject {
             return Disposables.create {
                 request.cancel()
             }
+        }
+    }
+    
+    // MARK:- APIs
+    func getListCoin(counter: String) -> Observable<(res: [CoinModel]?, isLoadMore: Bool?)> {
+        return Observable.create { [unowned self]observer in
+            self.request(apiRouter: APIRouter.getListCoin(counter: counter)).subscribe { response in
+                let model = Mapper<CoinModel>().mapArray(JSONObject: response?.data)
+                observer.onNext((model, false))
+                observer.onCompleted()
+            } onError: { error in
+                observer.onError(error)
+            }.disposed(by: rx.disposeBag)
+            return Disposables.create()
         }
     }
 }

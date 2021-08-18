@@ -25,7 +25,7 @@ class ShimmerView : FBShimmeringView {
         self.shimmeringAnimationOpacity = 0.3
         self.containView.frame = frame
         self.contentView = containView
-        self.addSubView(height: 60, top: 30, space: 30, items: 10)
+        self.addSubView(height: 60, top: 40, space: 30, items: 10)
     }
     
     required init?(coder: NSCoder) {

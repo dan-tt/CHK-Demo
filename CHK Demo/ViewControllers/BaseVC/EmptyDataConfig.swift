@@ -12,7 +12,7 @@ enum EmptyDataType: String {
 }
 
 struct EmptyDataConfig {
-    weak var controller: BaseVC!
+    weak var controller: BaseVC?
     
     init(controller: BaseVC) {
         self.controller = controller
@@ -27,16 +27,16 @@ struct EmptyDataConfig {
             .font: UIFont.titleFont(),
             .foregroundColor: UIColor.titleColor()
         ]
-        if controller.showLoading {
+        if controller?.showLoading ?? false {
             return NSAttributedString(string: "Loading..", attributes: attributes)
         }
         
-        if controller.showNoNetwork {
+        if controller?.showNoNetwork ?? false {
             return NSAttributedString(string: "not connect", attributes: attributes)
         }
         
-        if controller.showNoData {
-            switch controller.emptyDataType {
+        if controller?.showNoData ?? false{
+            switch controller?.emptyDataType {
             default:
                 return NSAttributedString(string: "No data", attributes: attributes)
             }
@@ -46,15 +46,15 @@ struct EmptyDataConfig {
     }
     
     var image: UIImage? {
-        if controller.showLoading {
+        if controller?.showLoading ?? false {
             return UIImage.iconFont(IconFont.ic_loading, fontSize: FontSize.h0, color: UIColor.lightGray)
         }
         
-        if controller.showNoData {
+        if controller?.showNoData ?? false {
             return UIImage.iconFont(IconFont.ic_no_data, fontSize: FontSize.h0, color: UIColor.lightGray)
         }
         
-        if controller.showNoNetwork {
+        if controller?.showNoNetwork ?? false {
             return UIImage.iconFont(IconFont.ic_no_network, fontSize: FontSize.h0, color: UIColor.lightGray)
         }
         
@@ -78,8 +78,8 @@ struct EmptyDataConfig {
             .foregroundColor: UIColor.titleColor()
         ]
         
-        if !controller.showLoading {
-            switch controller.emptyDataType {
+        if !(controller?.showLoading ?? false) {
+            switch controller?.emptyDataType {
             default:
                 return NSAttributedString(string: "Retry", attributes: attributes)
                 
@@ -98,7 +98,7 @@ struct EmptyDataConfig {
     }
     
     var verticalOffset: CGFloat {
-        switch controller.emptyDataType {
+        switch controller?.emptyDataType {
         default:
             return ScreenSize.LEADING
         }
@@ -109,10 +109,10 @@ struct EmptyDataConfig {
     }
     
     var customView: UIView? {
-        switch controller.emptyDataType {
+        switch controller?.emptyDataType {
         default:
-            let v = ShimmerView(type: .normal, frame: controller.view.frame)
-            return controller.showLoading ? v : nil
+            let v = ShimmerView(type: .normal, frame: controller?.view.frame ?? .zero)
+            return (controller?.showLoading ?? false) ? v : nil
         }
     }
 }

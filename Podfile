@@ -25,13 +25,14 @@ target 'CHK Demo' do
   pod 'JustIconFont'
   pod 'KafkaRefresh'
   pod 'Shimmer'
-end
+  # Pods for testing
+  target 'CHK DemoTests' do
+    inherit! :search_paths
+    pod 'RxBlocking'
+    pod 'RxTest'
+  end
 
-# Pods for testing
-target 'CHK DemoTests' do
-  inherit! :search_paths
-end
-
-# Pods for testing
-target 'CHK DemoUITests' do
+  # Pods for testing
+  target 'CHK DemoUITests' do
+  end
 end

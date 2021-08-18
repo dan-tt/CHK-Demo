@@ -23,9 +23,7 @@ class BaseVC: UIViewController, Navigatable {
     var showLoading: Bool = true
     var showNoNetwork: Bool = false
     var showNoData: Bool = false
-    
-    var isShowShimmer: Bool = false
-    
+        
     var needRefreshData: Bool = false
     
     var emptyDataConfig: EmptyDataConfig?
@@ -38,7 +36,6 @@ class BaseVC: UIViewController, Navigatable {
     var isPresent : Bool {
         return false
     }
-    
 
     // MARK: - Init
     
@@ -56,7 +53,7 @@ class BaseVC: UIViewController, Navigatable {
         super.viewDidLoad()
         emptyDataConfig = EmptyDataConfig(controller: self)
         makeUI()
-        self.view.setNeedsUpdateConstraints()
+        view.setNeedsUpdateConstraints()
         bindViewModel()
     }
     
@@ -127,8 +124,7 @@ class BaseVC: UIViewController, Navigatable {
     }
     
     func bindViewModel() {
-        self.viewModel?.loadingSignal.subscribe(onNext: { [weak self] (isLoading) in
-            guard let self = self else { return }
+        self.viewModel?.loadingSignal.subscribe(onNext: { [unowned self] (isLoading) in
             if isLoading{
                 self.showNoData = false
                 self.showNoNetwork = false
@@ -137,8 +133,7 @@ class BaseVC: UIViewController, Navigatable {
             self.viewData?.reloadEmptyDataSet()
         }).disposed(by: disposeBag)
         
-        self.viewModel?.errorSignal.subscribe(onNext: { [weak self] (error) in
-            guard let self = self else { return }
+        self.viewModel?.errorSignal.subscribe(onNext: { [unowned self] (error) in
             let errorCode = error.errorCode
             if (errorCode == 224) {
                 self.showNoData = true
@@ -148,12 +143,12 @@ class BaseVC: UIViewController, Navigatable {
             self.viewData?.reloadEmptyDataSet()
         }).disposed(by: disposeBag)
         
-        self.viewModel?.dismissSignal.subscribe(onNext: { [weak self] _ in
-            self?.dismiss()
+        self.viewModel?.dismissSignal.subscribe(onNext: { [unowned self] _ in
+            self.dismiss()
         }).disposed(by: disposeBag)
         
-        self.viewModel?.refreshSignal.subscribe(onNext: { [weak self] in
-            self?.refreshTrigger.onNext(())
+        self.viewModel?.refreshSignal.subscribe(onNext: { [unowned self] in
+            self.refreshTrigger.onNext(())
         }).disposed(by: disposeBag)
     }
     
@@ -201,8 +196,7 @@ class BaseVC: UIViewController, Navigatable {
 extension BaseVC : EmptyDataSetDelegate {
     
     func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
-                
-        if (self.showLoading && !isShowShimmer) || self.showNoData || self.showNoNetwork {
+        if self.showLoading || self.showNoData || self.showNoNetwork {
             return true
         }
         
@@ -210,7 +204,7 @@ extension BaseVC : EmptyDataSetDelegate {
     }
     
     func emptyDataSetShouldAllowTouch(_ scrollView: UIScrollView) -> Bool {
-        if (self.showLoading && !isShowShimmer) {
+        if self.showLoading {
             return false
         }
         return true
@@ -221,7 +215,7 @@ extension BaseVC : EmptyDataSetDelegate {
     }
     
     func emptyDataSetShouldAnimateImageView(_ scrollView: UIScrollView) -> Bool {
-        return (self.showLoading && !isShowShimmer)
+        return self.showLoading
     }
     
     func emptyDataSet(_ scrollView: UIScrollView, didTapView view: UIView) {

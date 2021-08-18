@@ -13,20 +13,8 @@ class Application: NSObject {
     let navigator: Navigator
     
     var window: UIWindow?
-    var orientationLock = UIInterfaceOrientationMask.portrait
+    
     var mainNav: NavigationController?
-    var numberOfOpenApp: Int = 0
-    var isShowingPopup: Bool = false
-    //status network
-    let reachabilityManager = Alamofire.NetworkReachabilityManager()
-    var isConnectToInternet: Bool {
-        return reachabilityManager?.isReachable ?? false
-    }
-    //
-    var backgroundTask : UIBackgroundTaskIdentifier?
-    var backgroundCompletionHandlerList = [String: (() -> Void)?]()
-    //deeplink
-    var appActived = false
     
     private override init() {
         self.navigator = Navigator.default
@@ -49,23 +37,9 @@ class Application: NSObject {
 extension Application {
     func didBecomeActive() {
         UIApplication.shared.applicationIconBadgeNumber = 0
-        self.appActived = true
     }
     
     func didEnterBackground() {
-        /*
-         Implement the UIApplication begin background task.
-         Invoke callTask() in didReceiveRemoteNotification.
-         This as per documentation the application gives you a maximum of 180 seconds to perform tasks in background.
-         So make sure that in receiving silent notification, the total time taken for download, parsing and saving doesn’t exceed 180 seconds.
-         */
-        let application = UIApplication.shared
-        backgroundTask = application.beginBackgroundTask(expirationHandler: {[weak self] in
-            if let bgTask = self?.backgroundTask {
-                application.endBackgroundTask(bgTask)
-                self?.backgroundTask = nil
-            }
-        })
     }
     
     func willEnterForeground() {

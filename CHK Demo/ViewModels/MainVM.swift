@@ -33,8 +33,8 @@ extension CoinSection: AnimatableSectionModelType {
 class MainVM: BaseVM, BaseVMType {
     struct Input {
         let headerTrigger: Observable<Void>
-        let footerTrigger: Observable<Void>
         let selectionTrigger: Driver<CoinModel>
+        let searchTrigger: Driver<String?>
     }
     
     struct Output {
@@ -42,8 +42,9 @@ class MainVM: BaseVM, BaseVMType {
         let searchResult: Driver<[CoinModel]>
     }
     
+    weak var apiService : APIService?
+    
     let elements = BehaviorRelay<[CoinModel]>(value: [])
-    let searchElements = BehaviorRelay<[CoinModel]>(value: [])
     //
     private var observers : [Any] = []
 
@@ -52,58 +53,77 @@ class MainVM: BaseVM, BaseVMType {
     private var refreshTime : Int = 0
     private var refreshTimer : Timer?
     //
+    init(apiService: APIService = APIService.shared) {
+        super.init()
+        self.apiService = apiService
+    }
+    //
     func transform(input: Input) -> Output {
         addObservers()
         // refresh
-        input.headerTrigger.flatMapLatest({ [unowned self] () -> Observable<[CoinModel]> in
+        let items = input.headerTrigger.flatMapLatest({ [unowned self] () -> Observable<[CoinModel]> in
             self.canLoadMoreSignal.accept(false)
             self.page = 1
             self.stopCount()
             return self.request().trackActivity(self.headerLoading)
-        }).subscribe(onNext: { [unowned self](items) in
-            self.elements.accept(items)
-            self.startCount()
-        }).disposed(by: disposeBag)
-        // load more
-        input.footerTrigger.flatMapLatest({ [unowned self] () -> Observable<[CoinModel]> in
-            self.page += 1
-            return self.request().trackActivity(self.footerLoading)
-        }).subscribe(onNext: { [unowned self](items) in
-            var curItems = self.elements.value
-            items.forEach { (item) in
-                guard let _ = curItems.first(where: {$0.base == item.base}) else {
-                    curItems.append(item)
-                    return
-                }
-            }
-            self.elements.accept(curItems)
-            
-        }).disposed(by: disposeBag)
+        })
+        .asDriver { error -> Driver<[CoinModel]> in
+            Logger.log(message: "get list coins error \(error.localizedDescription)")
+            return Driver.just([])
+        }
 
+        // search
+        let searchResult = input.searchTrigger.asObservable().flatMapLatest { text in
+            self.requestSearch(text: text)
+        }.asDriver { error -> Driver<[CoinModel]> in
+            Logger.log(message: "search error \(error.localizedDescription)")
+            return Driver.just([])
+        }
+        
         // did select item
         input.selectionTrigger.drive(onNext:{(item) in
         }).disposed(by: disposeBag)
+        //
+        items.asObservable().bind(to: elements).disposed(by: disposeBag)
         
-        return Output(items: elements.asDriver(), searchResult: searchElements.asDriver())
+        return Output(items: items, searchResult: searchResult)
     }
     
     func request() -> Observable<[CoinModel]> {
         return Observable.create({ [unowned self]observer in
             self.loadingSignal.accept(true)
             
-            APIService.shared.getListCoin(counter: "USD").subscribe { results, isMore in
+            self.apiService?.getListCoin(counter: "USD").subscribe { results, isMore in
                 self.loadingSignal.accept(false)
                 self.canLoadMoreSignal.accept(isMore ?? false)
                 observer.onNext(results ?? [])
                 observer.onCompleted()
+                self.startCount()
                 
             } onError: { error in
                 let e = ResponseError.init(224, error.localizedDescription)
                 self.errorSignal.onNext(e)
                 observer.onError(error)
+                self.startCount()
                 
             }.disposed(by: self.disposeBag)
             
+            return Disposables.create()
+        })
+    }
+    
+    func requestSearch(text: String?) -> Observable<[CoinModel]> {
+        return Observable.create({ [unowned self]observer in
+            let items = elements.value
+            guard let text = text?.lowercased().trimmingCharacters(in: CharacterSet.whitespacesAndNewlines),
+                  !text.isEmpty else {
+                observer.onNext(items)
+                observer.onCompleted()
+                return Disposables.create()
+            }
+            let result = items.filter({($0.name?.lowercased().contains(text) ?? false) || ($0.base?.lowercased().contains(text) ?? false)})
+            observer.onNext(result)
+            observer.onCompleted()
             return Disposables.create()
         })
     }
@@ -117,20 +137,6 @@ class MainVM: BaseVM, BaseVMType {
         
         let w = ScreenSize.SCREEN_MIN_LENGTH
         return CGSize(width: w, height: h)
-    }
-    
-    func search(with text: String?) {
-        let items = elements.value
-        guard items.count > 0 else {
-            return
-        }
-        guard let text = text?.lowercased().trimmingCharacters(in: CharacterSet.whitespacesAndNewlines),
-              !text.isEmpty else {
-            searchElements.accept(items)
-            return
-        }
-        let result = items.filter({($0.name?.lowercased().contains(text) ?? false) || ($0.base?.lowercased().contains(text) ?? false)})
-        searchElements.accept(result)
     }
         
     deinit {
