@@ -49,6 +49,8 @@
 		8F7648FF26CAAF4300D124D2 /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7648FE26CAAF4300D124D2 /* String+Ext.swift */; };
 		8F76490126CB481600D124D2 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F76490026CB481600D124D2 /* CollectionViewCell.swift */; };
 		8FB7060E26CB6C5D003A2F46 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7060D26CB6C5D003A2F46 /* ShimmerView.swift */; };
+		8FB7061026CCF396003A2F46 /* CoinDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7060F26CCF396003A2F46 /* CoinDetailVC.swift */; };
+		8FB7061226CCF3B0003A2F46 /* CoinDetailVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7061126CCF3B0003A2F46 /* CoinDetailVM.swift */; };
 		E1EDB98E75A8CB5F79B22BDA /* Pods_CHK_Demo_CHK_DemoUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19730ADAE8451EA13935520E /* Pods_CHK_Demo_CHK_DemoUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -122,6 +124,8 @@
 		8F7648FE26CAAF4300D124D2 /* String+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Ext.swift"; sourceTree = "<group>"; };
 		8F76490026CB481600D124D2 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		8FB7060D26CB6C5D003A2F46 /* ShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerView.swift; sourceTree = "<group>"; };
+		8FB7060F26CCF396003A2F46 /* CoinDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinDetailVC.swift; sourceTree = "<group>"; };
+		8FB7061126CCF3B0003A2F46 /* CoinDetailVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinDetailVM.swift; sourceTree = "<group>"; };
 		9C3F7C3123D82DABE3610935 /* Pods-CHK DemoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CHK DemoTests.release.xcconfig"; path = "Target Support Files/Pods-CHK DemoTests/Pods-CHK DemoTests.release.xcconfig"; sourceTree = "<group>"; };
 		A5C54EA5F63F14A695D9A621 /* Pods_CHK_Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CHK_Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB5F061591220D3FB49D4B87 /* Pods-CHK DemoUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CHK DemoUITests.release.xcconfig"; path = "Target Support Files/Pods-CHK DemoUITests/Pods-CHK DemoUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -236,6 +240,7 @@
 			children = (
 				8F7648B226CA423500D124D2 /* BaseVC */,
 				8F7648F026CA687B00D124D2 /* MainVC.swift */,
+				8FB7060F26CCF396003A2F46 /* CoinDetailVC.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -245,6 +250,7 @@
 			children = (
 				8F7648B926CA429A00D124D2 /* BaseVM */,
 				8F7648F226CA689B00D124D2 /* MainVM.swift */,
+				8FB7061126CCF3B0003A2F46 /* CoinDetailVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -646,7 +652,9 @@
 			files = (
 				8F7648EC26CA5B9100D124D2 /* IconFont.swift in Sources */,
 				8F7648CC26CA485900D124D2 /* ResponseModel.swift in Sources */,
+				8FB7061026CCF396003A2F46 /* CoinDetailVC.swift in Sources */,
 				8F7648E026CA542000D124D2 /* Application.swift in Sources */,
+				8FB7061226CCF3B0003A2F46 /* CoinDetailVM.swift in Sources */,
 				8F7648F126CA687B00D124D2 /* MainVC.swift in Sources */,
 				8F7648D426CA516100D124D2 /* EmptyDataSetView.swift in Sources */,
 				8F7648F726CA8FE400D124D2 /* UIImageView+Ext.swift in Sources */,

@@ -81,7 +81,8 @@ class MainVM: BaseVM, BaseVMType {
         }
         
         // did select item
-        input.selectionTrigger.drive(onNext:{(item) in
+        input.selectionTrigger.drive(onNext:{[unowned self](item) in
+            self.didSelect(item: item)
         }).disposed(by: disposeBag)
         //
         items.asObservable().bind(to: elements).disposed(by: disposeBag)

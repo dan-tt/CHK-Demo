@@ -35,6 +35,14 @@ class BaseVM: NSObject {
         return .zero
     }
     
+    func didSelect(item: Any?) {
+        if let coin = item as? CoinModel {
+            let vm = CoinDetailVM(coin: coin)
+            Navigator.default.show(segue: .coinDetail(viewModel: vm), sender: nil)
+            return
+        }
+    }
+    
     deinit {
         disposeBag = DisposeBag()
         Logger.log(message: "\(Self.self) deinit")

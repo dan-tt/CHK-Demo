@@ -12,8 +12,6 @@ protocol Navigatable {
 }
 struct Navigator {
     static var `default` = Navigator()
-    enum Scene {
-    }
     
     enum Transition {
         case root(in: UIWindow)
@@ -26,8 +24,14 @@ struct Navigator {
         case custom
     }
     
-    func get(segue: Scene) -> UIViewController?{
+    enum Scene {
+        case coinDetail(viewModel: CoinDetailVM)
+    }
+    
+    func get(segue: Scene) -> UIViewController? {
         switch segue {
+        case .coinDetail(let viewModel):
+            return CoinDetailVC(viewModel: viewModel, navigator: self)
         }
     }
     
@@ -60,7 +64,7 @@ struct Navigator {
     }
     
     func show(segue:Scene, sender: UIViewController?, transition: Transition = .navigation) {
-        if  let target = get(segue: segue) {
+        if let target = get(segue: segue) {
             show(target: target, sender: sender, transition: transition)
         }
     }

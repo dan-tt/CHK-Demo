@@ -63,8 +63,9 @@ class MainVC: BaseCollectionVC {
         v.delegate = self
         v.register(CoinCell.self, forCellWithReuseIdentifier: CoinCell.cellId)
         v.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 59 + ScreenSize.BOTTOM_PADDING, right: 0)
-        v.rx.itemSelected.subscribe(onNext: { [unowned self] _ in
+        v.rx.modelSelected(CoinModel.self).subscribe(onNext: { [unowned self]item in
             self.searchBar.tfSeach.resignFirstResponder()
+            self.viewModel?.didSelect(item: item)
         }).disposed(by: disposeBag)
         return v
     }()
@@ -96,7 +97,6 @@ class MainVC: BaseCollectionVC {
         let input = MainVM.Input(headerTrigger: refresh,
                                  selectionTrigger: collectionView.rx.modelSelected(CoinModel.self).asDriver(),
                                  searchTrigger: self.searchTrigger.asDriver())
-        
         let output = viewModel.transform(input: input)
         output.items.asObservable()
             .map({[CoinSection(items: $0, headerTitle: "")]})
@@ -190,7 +190,7 @@ class CoinCell: CollectionViewCell {
         //
         lbDesc.autoPinEdge(.top, to: .bottom, of: lbTitle, withOffset: space/2)
         lbDesc.autoPinEdge(.left, to: .left, of: lbTitle)
-        lbTitle.autoPinEdge(.right, to: .left, of: lbSellPrice, withOffset: -space, relation: .lessThanOrEqual)
+        lbDesc.autoPinEdge(.right, to: .left, of: lbSellPrice, withOffset: -space, relation: .lessThanOrEqual)
         //
         lbBuyPrice.autoPinEdge(toSuperviewEdge: .right)
         lbBuyPrice.autoAlignAxis(.horizontal, toSameAxisOf: lbTitle)
@@ -253,7 +253,7 @@ class CoinCell: CollectionViewCell {
         contentView.addSubview(vInfo)
         contentView.addSubview(vLine)
         //
-        let space : CGFloat = 16
+        let space : CGFloat = ScreenSize.LEADING
         imv.autoPinEdge(toSuperviewEdge: .left, withInset: space)
         imv.autoAlignAxis(toSuperviewAxis: .horizontal)
         imv.autoSetDimensions(to: CGSize(width: 40, height: 40))

@@ -27,22 +27,19 @@ class CHK_DemoUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         
-        app.textFields["Search"].tap()
+        let tfSearch = app.textFields["Search"]
+        XCTAssertTrue(tfSearch.exists)
+        tfSearch.tap()
+        tfSearch.typeText("ETH")
         
-        app/*@START_MENU_TOKEN@*/.keys["T"]/*[[".keyboards.keys[\"T\"]",".keys[\"T\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        let collectionView = app.collectionViews
+        let cell = collectionView.staticTexts["ETH"]
+        expectation(for: NSPredicate(format: "exists == 1"), evaluatedWith: cell, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
         
-        let hKey = app/*@START_MENU_TOKEN@*/.keys["h"]/*[[".keyboards.keys[\"h\"]",".keys[\"h\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
-        hKey.tap()
-        hKey.tap()
-        app/*@START_MENU_TOKEN@*/.staticTexts["Cancel"]/*[[".buttons[\"Cancel\"].staticTexts[\"Cancel\"]",".staticTexts[\"Cancel\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
-        
-        let collectionViewsQuery = app.collectionViews
-        let element = collectionViewsQuery.children(matching: .cell).element(boundBy: 4).children(matching: .other).element.children(matching: .other).element(boundBy: 0)
-        element.tap()
-        element.tap()
-        collectionViewsQuery.children(matching: .cell).element(boundBy: 1).children(matching: .other).element.swipeDown()
-        collectionViewsQuery.children(matching: .cell).element(boundBy: 2).children(matching: .other).element.children(matching: .other).element(boundBy: 0).tap()
-        app.collectionViews/*@START_MENU_TOKEN@*/.staticTexts["182.744 USD"]/*[[".cells.staticTexts[\"182.744 USD\"]",".staticTexts[\"182.744 USD\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        let btnCancel = app.staticTexts["Cancel"]
+        XCTAssertTrue(btnCancel.exists)
+        btnCancel.tap()
 
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.

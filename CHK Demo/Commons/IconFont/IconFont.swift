@@ -9,6 +9,7 @@ import UIKit
 import JustIconFont
 
 enum IconFont: String {
+    case ic_back = "\u{EAC9}"
     case ic_coin_default = "\u{EF4B}"
     case ic_loading = "\u{EC80}"
     case ic_no_data = "\u{EEFD}"
