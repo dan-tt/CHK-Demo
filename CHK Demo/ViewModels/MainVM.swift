@@ -9,7 +9,6 @@ import Foundation
 import RxSwift
 import RxCocoa
 import RxDataSources
-import UIDeviceComplete
 
 struct CoinSection {
     var items: [CoinModel]
@@ -41,22 +40,13 @@ class MainVM: BaseVM, BaseVMType {
         let items: Driver<[CoinModel]>
         let searchResult: Driver<[CoinModel]>
     }
-    
-    weak var apiService : APIService?
-    
+        
     let elements = BehaviorRelay<[CoinModel]>(value: [])
     //
     private var observers : [Any] = []
 
     // refresh timer
-    let timeCount : Int = 30 // 30s
-    private var refreshTime : Int = 0
-    private var refreshTimer : Timer?
-    //
-    init(apiService: APIService = APIService.shared) {
-        super.init()
-        self.apiService = apiService
-    }
+    let timeCount : Double = 30 // 30s
     //
     func transform(input: Input) -> Output {
         addObservers()
@@ -64,7 +54,6 @@ class MainVM: BaseVM, BaseVMType {
         let items = input.headerTrigger.flatMapLatest({ [unowned self] () -> Observable<[CoinModel]> in
             self.canLoadMoreSignal.accept(false)
             self.page = 1
-            self.stopCount()
             return self.request().trackActivity(self.headerLoading)
         })
         .asDriver { error -> Driver<[CoinModel]> in
@@ -91,23 +80,27 @@ class MainVM: BaseVM, BaseVMType {
     }
     
     func request() -> Observable<[CoinModel]> {
+        guard let api = api else {
+            return Observable.error(ResponseError())
+        }
+        self.loadingSignal.accept(true)
         return Observable.create({ [unowned self]observer in
-            self.loadingSignal.accept(true)
-            
-            self.apiService?.getListCoin(counter: "USD").subscribe { results, isMore in
+            var request: Single<[CoinModel]>
+            request = api.getListCoint(counter: "USD")
+            request.asObservable().subscribe { items in
                 self.loadingSignal.accept(false)
-                self.canLoadMoreSignal.accept(isMore ?? false)
-                observer.onNext(results ?? [])
+                observer.onNext(items)
                 observer.onCompleted()
-                self.startCount()
                 
             } onError: { error in
-                let e = ResponseError.init(224, error.localizedDescription)
-                self.errorSignal.onNext(e)
                 observer.onError(error)
-                self.startCount()
                 
-            }.disposed(by: self.disposeBag)
+            } onCompleted: {
+                // fetch data after 30s
+                DispatchQueue.main.asyncAfter(deadline: .now() + self.timeCount) {
+                    self.refreshSignal.onNext(())
+                }
+            }.disposed(by: disposeBag)
             
             return Disposables.create()
         })
@@ -128,10 +121,18 @@ class MainVM: BaseVM, BaseVMType {
             return Disposables.create()
         })
     }
-    
+
+    deinit {
+        removeObservers()
+    }
+}
+
+// MARK: - BaseVMDataSource
+
+extension MainVM {
     override func sizeForItemAt(indexPath: IndexPath) -> CGSize {
         let h : CGFloat = 80
-        if UIDevice.current.dc.isIpad {
+        if UIDevice.current.userInterfaceIdiom == .pad {
             let w = (ScreenSize.SCREEN_MIN_LENGTH - ScreenSize.LEADING)/2.0
             return CGSize(width: w, height: h)
         }
@@ -139,52 +140,21 @@ class MainVM: BaseVM, BaseVMType {
         let w = ScreenSize.SCREEN_MIN_LENGTH
         return CGSize(width: w, height: h)
     }
-        
-    deinit {
-        removeObservers()
-    }
 }
+
 
 // MARK: - private funcs
 
 extension MainVM {
-    // start timer refresh data
-    private func startCount() {
-        guard self.refreshTimer == nil else {
-            return
-        }
-        self.refreshTime = 0
-        self.refreshTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [unowned self]timer in
-            self.refreshTime += 1
-            if self.refreshTime > self.timeCount {
-                self.refreshTime = 0
-                self.refreshSignal.onNext(())
-            }
-        }
-        // register to NSrunloop
-        if let timer = self.refreshTimer {
-            RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
-        }
-    }
-    // start timer refresh data
-    private func stopCount() {
-        refreshTimer?.invalidate()
-        refreshTimer = nil
-        refreshTime = 0
-    }
     // add observers
     private func addObservers() {
         if !observers.isEmpty {
             return
         }
-        // stop timer when the app did enter background
-        observers.append(NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil, using: { [unowned self] (notification) in
-            self.stopCount()
-        }))
-        
+
         // start timer when the app will enter foreground
         observers.append(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil, using: { [unowned self] (notification) in
-             self.startCount()
+            self.refreshSignal.onNext(())
         }))
     }
     

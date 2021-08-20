@@ -13,11 +13,13 @@ class Application: NSObject {
     let navigator: Navigator
     
     var window: UIWindow?
-    
+    var api: API?
+
     var mainNav: NavigationController?
     
     private override init() {
         self.navigator = Navigator.default
+        self.api = APIService()
         super.init()
     }
     
@@ -27,7 +29,7 @@ class Application: NSObject {
         }
         window.makeKeyAndVisible()
         self.window = window
-        let rootVC = NavigationController(rootViewController: MainVC(viewModel: MainVM(), navigator: navigator))
+        let rootVC = NavigationController(rootViewController: MainVC(viewModel: MainVM(api: api), navigator: navigator))
         window.rootViewController = rootVC
         self.mainNav = window.rootViewController as? NavigationController
     }

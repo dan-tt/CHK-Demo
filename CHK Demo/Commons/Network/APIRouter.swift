@@ -8,10 +8,12 @@
 import Foundation
 import Alamofire
 
-enum APIRouter: URLRequestConvertible {
+enum APIRouter {
     // MARK: - Defines
     case getListCoin(counter: String)
+}
 
+extension APIRouter: URLRequestConvertible {
     // MARK: - Path
     private var path: String {
         switch self {

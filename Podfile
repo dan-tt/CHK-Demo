@@ -8,28 +8,38 @@ use_frameworks!
 
 # Pods for CHK Demo
 target 'CHK Demo' do
-  pod 'RxSwift'
-  pod 'RxCocoa'
-  pod 'RxSwiftExt'
-  pod 'NSObject+Rx'
-  pod 'RxViewController'
-  pod 'RxDataSources'
-  pod 'RxKeyboard'
-  pod 'RxGesture'
-  pod 'Alamofire'
-  pod 'ObjectMapper'
-  pod 'AlamofireObjectMapper'
-  pod 'SDWebImage'
-  pod 'UIDeviceComplete'
-  pod 'PureLayout'
-  pod 'JustIconFont'
-  pod 'KafkaRefresh'
-  pod 'Shimmer'
+  # Networking
+  pod 'Alamofire'  # https://github.com/Alamofire/Alamofire
+  
+  # JSON Mapping
+  pod 'ObjectMapper'  # https://github.com/tristanhimmelman/ObjectMapper
+  pod 'AlamofireObjectMapper' # https://github.com/tristanhimmelman/AlamofireObjectMapper
+  
+  # Rx Extensions
+  pod 'RxDataSources'  # https://github.com/RxSwiftCommunity/RxDataSources
+  pod 'RxSwiftExt'  # https://github.com/RxSwiftCommunity/RxSwiftExt
+  pod 'NSObject+Rx'  # https://github.com/RxSwiftCommunity/NSObject-Rx
+  pod 'RxViewController'  # https://github.com/devxoul/RxViewController
+  pod 'RxGesture'  # https://github.com/RxSwiftCommunity/RxGesture
+
+  # Image
+  pod 'SDWebImage' # https://github.com/SDWebImage/SDWebImage
+  
+  # Auto Layout
+  pod 'PureLayout' # https://github.com/PureLayout/PureLayout
+  
+  # Icon Font
+  pod 'JustIconFont' # https://github.com/Xiaoye220/JustIconFont
+  
+  # UI
+  pod 'KafkaRefresh' # https://github.com/OpenFeyn/KafkaRefresh
+  pod 'Shimmer' # https://github.com/facebookarchive/Shimmer
+  
   # Pods for testing
   target 'CHK DemoTests' do
     inherit! :search_paths
-    pod 'RxBlocking'
-    pod 'RxTest'
+    pod 'RxBlocking' # https://github.com/ReactiveX/RxSwift
+    pod 'RxTest' # https://github.com/ReactiveX/RxSwift
   end
 
   # Pods for testing

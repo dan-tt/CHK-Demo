@@ -15,7 +15,7 @@ import PureLayout
 class TableBaseVC: BaseVC, UIScrollViewDelegate {
     lazy var constraint_top_tbv: NSLayoutConstraint = NSLayoutConstraint()
     lazy var constraint_bottom_tbv: NSLayoutConstraint = NSLayoutConstraint()
-
+    
     lazy var vHeaderRefresh: KafkaReplicatorHeader = {
         let v = KafkaReplicatorHeader()
         v.themeColor = UIColor.gray
@@ -107,13 +107,15 @@ class TableBaseVC: BaseVC, UIScrollViewDelegate {
         super.bindViewModel()
         if self.showHeaderRefresh() {
             self.viewModel?.headerLoading.asObservable().bind(to: self.tableView.headRefreshControl.rx.isAnimating).disposed(by: disposeBag)
-            self.viewModel?.loadingSignal.subscribe(onNext: { [unowned self]isLoading in
-                if isLoading {
-                    self.tableView.headRefreshControl.resumeRefreshAvailable()
-                    return
-                }
-                self.tableView.headRefreshControl.endRefreshing()
-            }).disposed(by: disposeBag)
+            self.viewModel?.loadingSignal
+                .observe(on: MainScheduler.asyncInstance)
+                .subscribe(onNext: { [unowned self]isLoading in
+                    if isLoading {
+                        self.tableView.headRefreshControl.resumeRefreshAvailable()
+                        return
+                    }
+                    self.tableView.headRefreshControl.endRefreshing()
+                }).disposed(by: disposeBag)
         }
         if self.showFooterLoadMore() {
             self.viewModel?.footerLoading.asObservable().bind(to: self.tableView.footRefreshControl.rx.isAnimating).disposed(by: disposeBag)

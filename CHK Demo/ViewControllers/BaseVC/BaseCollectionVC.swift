@@ -91,13 +91,15 @@ class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
         
         if self.showHeaderRefresh() {
             self.viewModel?.headerLoading.asObservable().bind(to: collectionView.headRefreshControl.rx.isAnimating).disposed(by: disposeBag)
-            self.viewModel?.loadingSignal.subscribe(onNext: { [unowned self]isLoading in
-                if isLoading {
-                    self.collectionView.headRefreshControl.resumeRefreshAvailable()
-                    return
-                }
-                self.collectionView.headRefreshControl.endRefreshing()
-            }).disposed(by: disposeBag)
+            self.viewModel?.loadingSignal
+                .observe(on: MainScheduler.asyncInstance)
+                .subscribe(onNext: { [unowned self]isLoading in
+                    if isLoading {
+                        self.collectionView.headRefreshControl.resumeRefreshAvailable()
+                        return
+                    }
+                    self.collectionView.headRefreshControl.endRefreshing()
+                }).disposed(by: disposeBag)
         }
         if self.showFooterLoadMore() {
             self.viewModel?.footerLoading.asObservable().bind(to: collectionView.footRefreshControl.rx.isAnimating).disposed(by: disposeBag)

@@ -8,8 +8,8 @@
 import Foundation
 class CoinDetailVM: BaseVM {
     var coin : CoinModel?
-    init(coin: CoinModel) {
-        super.init()
+    init(coin: CoinModel, api: API?) {
+        super.init(api: api)
         self.coin = coin
     }
 }
