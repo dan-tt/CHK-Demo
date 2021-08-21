@@ -9,6 +9,6 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-protocol API {
+protocol API : AnyObject {
     func getListCoint(counter: String) -> Single<[CoinModel]>
 }

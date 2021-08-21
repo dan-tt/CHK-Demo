@@ -8,22 +8,23 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import ObjectMapper
 
-protocol BaseVMType{
+protocol BaseVMType {
     associatedtype Input
     associatedtype Output
     
     func transform(input: Input) -> Output
 }
 
-@objc protocol BaseVMDataSource {
-    @objc func sizeForItemAt(indexPath: IndexPath) -> CGSize
-    @objc func didSelect(item: Any?)
+protocol BaseDataSource : AnyObject {
+    func sizeForItemAt(indexPath: IndexPath) -> CGSize
 }
 
 class BaseVM: NSObject {
     
-    var api: API?
+    weak var api: API?
+    weak var baseDataSource : BaseDataSource?
 
     var disposeBag = DisposeBag()
     
@@ -45,23 +46,17 @@ class BaseVM: NSObject {
         self.api = api
     }
     
-    deinit {
-        disposeBag = DisposeBag()
-        Logger.log(message: "\(Self.self) deinit")
-    }
-}
-
-extension BaseVM: BaseVMDataSource {
-    
-    func sizeForItemAt(indexPath: IndexPath) -> CGSize {
-        return .zero
-    }
-    
     func didSelect(item: Any?) {
         if let coin = item as? CoinModel {
             let vm = CoinDetailVM(coin: coin, api: api)
             Navigator.default.show(segue: .coinDetail(viewModel: vm), sender: nil)
             return
         }
+    }
+
+    
+    deinit {
+        disposeBag = DisposeBag()
+        Logger.log(message: "\(Self.self) deinit")
     }
 }

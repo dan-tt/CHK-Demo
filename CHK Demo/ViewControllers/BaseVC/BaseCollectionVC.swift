@@ -12,7 +12,7 @@ import RxDataSources
 import KafkaRefresh
 import NSObject_Rx
 
-class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
+class BaseCollectionVC: BaseVC, UIScrollViewDelegate {    
     lazy var constraint_top_clv: NSLayoutConstraint = NSLayoutConstraint()
     lazy var constraint_bottom_clv: NSLayoutConstraint = NSLayoutConstraint()
     
@@ -148,7 +148,7 @@ class BaseCollectionVC: BaseVC, UIScrollViewDelegate {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension MainVC : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return viewModel?.sizeForItemAt(indexPath: indexPath) ?? .zero
+        return viewModel?.baseDataSource?.sizeForItemAt(indexPath: indexPath) ?? .zero
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

@@ -49,6 +49,7 @@ class MainVM: BaseVM, BaseVMType {
     let timeCount : Double = 30 // 30s
     //
     func transform(input: Input) -> Output {
+        baseDataSource = self
         addObservers()
         // refresh
         let items = input.headerTrigger.flatMapLatest({ [unowned self] () -> Observable<[CoinModel]> in
@@ -121,16 +122,12 @@ class MainVM: BaseVM, BaseVMType {
             return Disposables.create()
         })
     }
-
-    deinit {
-        removeObservers()
-    }
 }
 
 // MARK: - BaseVMDataSource
 
-extension MainVM {
-    override func sizeForItemAt(indexPath: IndexPath) -> CGSize {
+extension MainVM : BaseDataSource {
+    func sizeForItemAt(indexPath: IndexPath) -> CGSize {
         let h : CGFloat = 80
         if UIDevice.current.userInterfaceIdiom == .pad {
             let w = (ScreenSize.SCREEN_MIN_LENGTH - ScreenSize.LEADING)/2.0
@@ -148,21 +145,9 @@ extension MainVM {
 extension MainVM {
     // add observers
     private func addObservers() {
-        if !observers.isEmpty {
-            return
-        }
-
-        // start timer when the app will enter foreground
-        observers.append(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil, using: { [unowned self] (notification) in
-            self.refreshSignal.onNext(())
-        }))
+        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .subscribe { [unowned self]_ in
+                self.refreshSignal.onNext(())
+            }.disposed(by: disposeBag)
     }
-    
-    private func removeObservers() {
-        observers.forEach { (obs) in
-            NotificationCenter.default.removeObserver(obs)
-        }
-        observers.removeAll()
-    }
-    
 }
